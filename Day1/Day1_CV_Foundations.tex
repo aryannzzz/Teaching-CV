@@ -1,0 +1,1225 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+% Python code styling
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Python
+}
+
+\lstset{style=pythonstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Day 1: Foundations}
+\lhead{CV Bootcamp}
+\rfoot{Page \thepage}
+
+\title{\textbf{Day 1: Computer Vision Foundations}\\
+\large Build Base Tooling + Data Intuition\\
+\large NumPy + Pandas + OpenCV Basics}
+\author{made with $\heartsuit$, by Aryan}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Session Overview}
+Welcome to Day 1! Today we build the foundational toolkit for computer vision work. By the end of this session, you'll understand what computer vision is, master NumPy for array operations, use Pandas for dataset management, and perform essential image processing with OpenCV.
+
+\textbf{Learning Objectives:}
+\begin{itemize}[noitemsep]
+    \item Understand Computer Vision and its real-world applications
+    \item Master NumPy: arrays, broadcasting, vectorization
+    \item Use Pandas for vision annotation tables and data management
+    \item Perform image operations with OpenCV
+    \item Complete edge detection mini-project
+\end{itemize}
+
+\section{Part 1: What is Computer Vision?}
+
+\subsection{Definition}
+Computer Vision (CV) is a field of artificial intelligence that enables computers to derive meaningful information from digital images, videos, and other visual inputs. It teaches machines to "see" and understand the visual world.
+
+\subsection{Real-World Applications}
+
+\subsubsection{1. Object Detection}
+Identifying and locating objects within images or video streams.
+
+\textbf{Examples:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Autonomous vehicles:} Detecting pedestrians, traffic signs, lane markers, other vehicles
+    \item \textbf{Retail analytics:} Tracking inventory on shelves, customer behavior analysis
+    \item \textbf{Security systems:} Identifying unauthorized persons, suspicious packages
+    \item \textbf{Manufacturing:} Quality control, defect detection
+\end{itemize}
+
+\subsubsection{2. Optical Character Recognition (OCR)}
+Converting images of text into machine-readable text.
+
+\textbf{Examples:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Document digitization:} Books, historical documents, receipts
+    \item \textbf{License plate recognition:} Parking systems, toll booths
+    \item \textbf{Check processing:} Banking automation
+    \item \textbf{Text extraction:} From signs, product labels, invoices
+\end{itemize}
+
+\subsubsection{3. Image Segmentation}
+Dividing images into meaningful regions or segments.
+
+\textbf{Examples:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Medical imaging:} Tumor detection, organ segmentation, disease diagnosis
+    \item \textbf{Satellite imagery:} Land use classification, crop monitoring
+    \item \textbf{Photo editing:} Background removal, portrait mode
+    \item \textbf{Robotics:} Object grasping, scene understanding
+\end{itemize}
+
+\subsubsection{4. Augmented Reality (AR)}
+Overlaying digital content on real-world views.
+
+\textbf{Examples:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Social media:} Snapchat/Instagram filters, facial effects
+    \item \textbf{E-commerce:} IKEA Place app (furniture visualization), virtual try-on
+    \item \textbf{Gaming:} Pokemon GO, AR games
+    \item \textbf{Navigation:} Google Maps AR walking directions
+\end{itemize}
+
+\subsubsection{5. Robotics Vision}
+Enabling robots to perceive and interact with environments.
+
+\textbf{Examples:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Industrial robots:} Quality inspection, assembly line automation
+    \item \textbf{Warehouse automation:} Amazon robots, inventory management
+    \item \textbf{Agriculture:} Crop health monitoring, automated harvesting
+    \item \textbf{Healthcare:} Surgical robots, patient monitoring
+\end{itemize}
+
+\subsection{Classical Image Processing vs Deep Learning Vision}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Aspect} & \textbf{Classical Methods} & \textbf{Deep Learning} \\
+\hline
+Approach & Hand-crafted algorithms & Learn from data \\
+\hline
+Features & Manual design (SIFT, HOG) & Automatic feature learning \\
+\hline
+Training & No training needed & Requires labeled data \\
+\hline
+Performance & Good for specific tasks & Excellent for complex tasks \\
+\hline
+Computational & Fast, efficient & Resource-intensive (GPU) \\
+\hline
+Scalability & Plateaus quickly & Improves with more data \\
+\hline
+Examples & Edge detection, template matching & CNNs, YOLO, Mask R-CNN \\
+\hline
+\end{tabular}
+\caption{Classical vs Deep Learning Computer Vision}
+\end{table}
+
+\textbf{When to use each:}
+\begin{itemize}
+    \item \textbf{Classical:} Preprocessing, simple detection, resource-constrained environments, well-defined problems
+    \item \textbf{Deep Learning:} Complex patterns, large datasets available, end-to-end solutions, state-of-the-art accuracy needed
+\end{itemize}
+
+\section{Part 2: NumPy Essentials}
+
+NumPy is the foundation of numerical computing in Python. Images are represented as NumPy arrays, making NumPy mastery essential for CV work.
+
+\subsection{Why NumPy for Computer Vision?}
+\begin{itemize}[noitemsep]
+    \item \textbf{Images = Arrays:} Grayscale (2D), Color (3D)
+    \item \textbf{Speed:} C-optimized operations, 50-100x faster than Python loops
+    \item \textbf{Vectorization:} Apply operations to entire arrays
+    \item \textbf{Memory efficiency:} Handles large datasets
+    \item \textbf{Ecosystem:} Integrates with OpenCV, PIL, scikit-image
+\end{itemize}
+
+\subsection{Arrays, Shape, and Dimensions}
+
+\begin{lstlisting}
+import numpy as np
+
+# Creating arrays
+arr_1d = np.array([1, 2, 3, 4, 5])
+arr_2d = np.array([[1, 2, 3],
+                   [4, 5, 6],
+                   [7, 8, 9]])
+
+# Array properties
+print(f"Shape: {arr_2d.shape}")      # (3, 3) - rows, columns
+print(f"Dimensions: {arr_2d.ndim}")  # 2
+print(f"Size: {arr_2d.size}")        # 9 total elements
+print(f"Data type: {arr_2d.dtype}")  # int64
+
+# Image array representations
+# Grayscale: (height, width)
+gray_image = np.zeros((480, 640), dtype=np.uint8)
+print(f"Grayscale shape: {gray_image.shape}")  # (480, 640)
+
+# RGB: (height, width, channels)
+color_image = np.zeros((480, 640, 3), dtype=np.uint8)
+print(f"Color shape: {color_image.shape}")  # (480, 640, 3)
+
+# Batch of images: (batch_size, height, width, channels)
+batch = np.zeros((32, 224, 224, 3), dtype=np.uint8)
+print(f"Batch shape: {batch.shape}")  # (32, 224, 224, 3)
+\end{lstlisting}
+
+\subsection{Array Creation Methods}
+
+\begin{lstlisting}
+# Zeros and ones
+zeros = np.zeros((3, 3))
+ones = np.ones((2, 4))
+full = np.full((3, 3), 7)  # Fill with specific value
+
+# Identity matrix
+identity = np.eye(4)
+
+# Random arrays
+random_uniform = np.random.rand(3, 3)        # Uniform [0, 1)
+random_normal = np.random.randn(3, 3)        # Normal distribution
+random_int = np.random.randint(0, 255, (3, 3))  # Integers
+
+# Ranges
+arange = np.arange(0, 10, 2)           # [0 2 4 6 8]
+linspace = np.linspace(0, 1, 5)        # 5 evenly spaced values
+
+# Like operations (match shape/dtype of existing array)
+arr = np.array([[1, 2], [3, 4]])
+zeros_like = np.zeros_like(arr)
+ones_like = np.ones_like(arr)
+\end{lstlisting}
+
+\subsection{Slicing and Indexing}
+
+\begin{lstlisting}
+arr = np.array([[10, 20, 30, 40],
+                [50, 60, 70, 80],
+                [90, 100, 110, 120]])
+
+# Basic indexing
+print(arr[0, 0])      # 10 - first element
+print(arr[2, 3])      # 120 - last element
+print(arr[-1, -1])    # 120 - negative indexing
+
+# Row and column selection
+print(arr[0, :])      # [10 20 30 40] - first row
+print(arr[:, 1])      # [20 60 100] - second column
+print(arr[:, -1])     # [40 80 120] - last column
+
+# Slicing ranges
+print(arr[0:2, 1:3])  
+# [[20 30]
+#  [60 70]]
+
+# Boolean indexing
+mask = arr > 50
+print(arr[mask])      # [60 70 80 90 100 110 120]
+
+# Fancy indexing
+rows = [0, 2]
+cols = [1, 3]
+print(arr[rows, cols])  # [20 120]
+
+# For images - crop center region
+image = np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8)
+h, w = image.shape[:2]
+crop_size = 200
+center_crop = image[
+    h//2 - crop_size//2 : h//2 + crop_size//2,
+    w//2 - crop_size//2 : w//2 + crop_size//2
+]
+print(f"Original: {image.shape}, Cropped: {center_crop.shape}")
+\end{lstlisting}
+
+\subsection{Broadcasting}
+
+Broadcasting allows NumPy to work with arrays of different shapes during arithmetic operations.
+
+\begin{lstlisting}
+# Scalar broadcasting
+arr = np.array([[1, 2, 3],
+                [4, 5, 6]])
+result = arr + 10  # Add 10 to every element
+print(result)
+# [[11 12 13]
+#  [14 15 16]]
+
+# 1D to 2D broadcasting
+arr_2d = np.array([[1, 2, 3],
+                   [4, 5, 6]])
+arr_1d = np.array([10, 20, 30])
+
+result = arr_2d + arr_1d  # arr_1d broadcasts across rows
+print(result)
+# [[11 22 33]
+#  [14 25 36]]
+
+# Column broadcasting
+col_vector = np.array([[10],
+                       [20]])
+result = arr_2d + col_vector  # Broadcasts across columns
+print(result)
+# [[11 12 13]
+#  [24 25 26]]
+
+# Image example - adjust RGB channels independently
+image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+channel_adjustments = np.array([1.2, 1.0, 0.8])  # Boost red, reduce blue
+adjusted = np.clip(image * channel_adjustments, 0, 255).astype(np.uint8)
+\end{lstlisting}
+
+\textbf{Broadcasting Rules:}
+\begin{enumerate}
+    \item Compare dimensions from right to left
+    \item Dimensions must be equal, or one must be 1
+    \item Missing dimensions are assumed to be 1
+\end{enumerate}
+
+\subsection{Element-wise Operations}
+
+\begin{lstlisting}
+arr = np.array([1, 2, 3, 4, 5])
+
+# Arithmetic
+print(arr + 10)       # [11 12 13 14 15]
+print(arr * 2)        # [2 4 6 8 10]
+print(arr ** 2)       # [1 4 9 16 25]
+print(arr / 2)        # [0.5 1. 1.5 2. 2.5]
+
+# Array to array
+arr2 = np.array([5, 4, 3, 2, 1])
+print(arr + arr2)     # [6 6 6 6 6]
+print(arr * arr2)     # [5 8 9 8 5]
+
+# Comparison operations
+print(arr > 3)        # [False False False True True]
+print(arr == 3)       # [False False True False False]
+
+# Mathematical functions
+print(np.sqrt(arr))   # Square root
+print(np.exp(arr))    # Exponential
+print(np.log(arr))    # Natural log
+print(np.sin(arr))    # Sine
+
+# Image brightness adjustment
+image = np.random.randint(0, 200, (100, 100), dtype=np.uint8)
+brighter = np.clip(image + 50, 0, 255).astype(np.uint8)
+darker = np.clip(image - 50, 0, 255).astype(np.uint8)
+contrast = np.clip(image * 1.5, 0, 255).astype(np.uint8)
+\end{lstlisting}
+
+\subsection{Reshaping and Flattening}
+
+\begin{lstlisting}
+# Reshape
+arr = np.array([1, 2, 3, 4, 5, 6])
+reshaped = arr.reshape(2, 3)
+print(reshaped)
+# [[1 2 3]
+#  [4 5 6]]
+
+# Automatic dimension inference with -1
+auto = arr.reshape(3, -1)  # NumPy calculates: (3, 2)
+print(auto.shape)
+
+# Flatten to 1D
+flat = reshaped.flatten()     # Returns copy
+ravel = reshaped.ravel()      # Returns view (faster)
+
+# Transpose
+transposed = reshaped.T
+print(transposed)
+# [[1 4]
+#  [2 5]
+#  [3 6]]
+
+# Image examples
+# Flatten for ML model input
+mnist_image = np.random.randint(0, 255, (28, 28), dtype=np.uint8)
+flat_image = mnist_image.flatten()
+print(f"Image shape: {mnist_image.shape}, Flat: {flat_image.shape}")
+# (28, 28) -> (784,)
+
+# Add batch dimension
+single_image = np.random.rand(224, 224, 3)
+batched = single_image.reshape(1, 224, 224, 3)
+# or
+batched = np.expand_dims(single_image, axis=0)
+
+# Rearrange dimensions (HWC to CHW for PyTorch)
+hwc_image = np.random.rand(224, 224, 3)
+chw_image = np.transpose(hwc_image, (2, 0, 1))
+print(f"HWC: {hwc_image.shape}, CHW: {chw_image.shape}")
+\end{lstlisting}
+
+\subsection{Vectorization vs Loops}
+
+Vectorization is crucial for performance in CV applications.
+
+\begin{lstlisting}
+import time
+import numpy as np
+
+# Create test data
+arr = np.random.rand(1000000)
+
+# LOOP APPROACH (SLOW)
+start = time.time()
+result_loop = np.zeros_like(arr)
+for i in range(len(arr)):
+    result_loop[i] = arr[i] ** 2
+loop_time = time.time() - start
+
+# VECTORIZED APPROACH (FAST)
+start = time.time()
+result_vectorized = arr ** 2
+vectorized_time = time.time() - start
+
+print(f"Loop time: {loop_time:.4f}s")
+print(f"Vectorized time: {vectorized_time:.4f}s")
+print(f"Speedup: {loop_time / vectorized_time:.1f}x faster!")
+# Typically 50-100x faster!
+
+# Verify results are identical
+print(f"Results match: {np.allclose(result_loop, result_vectorized)}")
+\end{lstlisting}
+
+\textbf{Key Principle:} Always prefer vectorized operations over loops for array processing.
+
+\subsection{Useful NumPy Functions for Images}
+
+\begin{lstlisting}
+image = np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8)
+
+# Statistical operations
+print(f"Mean: {image.mean()}")
+print(f"Std: {image.std()}")
+print(f"Min: {image.min()}, Max: {image.max()}")
+print(f"Median: {np.median(image)}")
+
+# Per-channel statistics
+print(f"Mean per channel: {image.mean(axis=(0, 1))}")  # [R, G, B] means
+print(f"Std per channel: {image.std(axis=(0, 1))}")
+
+# Clipping values
+clipped = np.clip(image, 50, 200)  # Constrain to [50, 200]
+
+# Normalization
+normalized = (image - image.min()) / (image.max() - image.min())
+
+# Standardization (zero mean, unit variance)
+standardized = (image - image.mean()) / image.std()
+
+# Concatenation
+img1 = np.zeros((100, 100, 3), dtype=np.uint8)
+img2 = np.ones((100, 100, 3), dtype=np.uint8) * 255
+
+hstack = np.hstack([img1, img2])  # Horizontal: (100, 200, 3)
+vstack = np.vstack([img1, img2])  # Vertical: (200, 100, 3)
+dstack = np.dstack([img1, img2])  # Depth: (100, 100, 6)
+
+# Stacking for batches
+batch = np.stack([img1, img2, img1])  # (3, 100, 100, 3)
+
+# Splitting arrays
+split_images = np.split(batch, 3, axis=0)  # Split batch into individual images
+
+# Where (conditional selection)
+# Create binary mask
+mask = image > 127
+# Apply different operations based on condition
+output = np.where(mask, 255, 0)  # White where >127, black otherwise
+\end{lstlisting}
+
+\section{Part 3: Pandas for Vision Datasets}
+
+Pandas excels at organizing image metadata, file paths, labels, and dataset splits.
+
+\subsection{Why Pandas for Computer Vision?}
+\begin{itemize}[noitemsep]
+    \item \textbf{Organize paths:} Manage thousands of image file locations
+    \item \textbf{Label management:} Store and manipulate class labels
+    \item \textbf{Dataset operations:} Train/val/test splits, filtering, sampling
+    \item \textbf{Annotation tables:} Bounding boxes, segmentation masks, metadata
+    \item \textbf{Analysis:} Quick dataset statistics and visualizations
+\end{itemize}
+
+\subsection{Loading and Exploring Data}
+
+\begin{lstlisting}
+import pandas as pd
+import os
+
+# Load CSV with image annotations
+df = pd.read_csv('annotations.csv')
+
+# Basic exploration
+print(df.head())          # First 5 rows
+print(df.tail())          # Last 5 rows
+print(df.shape)           # (rows, columns)
+print(df.columns)         # Column names
+print(df.dtypes)          # Data types
+print(df.info())          # Summary info
+print(df.describe())      # Statistical summary
+
+# Select specific columns
+filenames = df['filename']
+labels = df['label']
+
+# Select multiple columns
+subset = df[['filename', 'label', 'width', 'height']]
+
+# Select rows by condition
+cats = df[df['label'] == 'cat']
+large_images = df[df['width'] > 640]
+\end{lstlisting}
+
+\subsection{Creating Dataset DataFrames}
+
+\begin{lstlisting}
+import os
+from pathlib import Path
+
+# Example 1: Build from folder structure
+# Assume: dataset/class_name/image.jpg
+dataset_path = 'dataset/'
+data = []
+
+for class_name in os.listdir(dataset_path):
+    class_path = os.path.join(dataset_path, class_name)
+    
+    if os.path.isdir(class_path):
+        for img_file in os.listdir(class_path):
+            if img_file.endswith(('.jpg', '.jpeg', '.png')):
+                data.append({
+                    'filepath': os.path.join(class_path, img_file),
+                    'filename': img_file,
+                    'label': class_name,
+                    'class_id': hash(class_name) % 1000  # Numeric label
+                })
+
+df = pd.DataFrame(data)
+print(df.head())
+print(f"\nDataset size: {len(df)} images")
+print(f"Classes: {df['label'].unique()}")
+\end{lstlisting}
+
+\subsection{Selecting Rows and Columns}
+
+\begin{lstlisting}
+# Select single column (returns Series)
+labels = df['label']
+
+# Select multiple columns (returns DataFrame)
+subset = df[['filename', 'label']]
+
+# Row selection by index
+first_row = df.iloc[0]        # First row
+last_row = df.iloc[-1]        # Last row
+rows_1_to_5 = df.iloc[1:6]    # Rows 1-5
+
+# Row selection by condition
+cats = df[df['label'] == 'cat']
+dogs_or_cats = df[df['label'].isin(['dog', 'cat'])]
+large = df[(df['width'] > 640) & (df['height'] > 480)]
+
+# Loc vs iloc
+# iloc: integer position
+# loc: label-based
+df_indexed = df.set_index('filename')
+specific_image = df_indexed.loc['img_001.jpg']
+\end{lstlisting}
+
+\subsection{Merging and Cleaning}
+
+\begin{lstlisting}
+# Create two dataframes
+df_images = pd.DataFrame({
+    'image_id': [1, 2, 3, 4],
+    'filepath': ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg']
+})
+
+df_labels = pd.DataFrame({
+    'image_id': [1, 2, 3, 4],
+    'label': ['cat', 'dog', 'cat', 'bird']
+})
+
+# Merge (SQL-like join)
+df_merged = pd.merge(df_images, df_labels, on='image_id')
+print(df_merged)
+
+# Handle missing data
+df_with_missing = pd.DataFrame({
+    'filename': ['img1.jpg', 'img2.jpg', None, 'img4.jpg'],
+    'label': ['cat', None, 'dog', 'bird'],
+    'width': [640, 480, 800, None]
+})
+
+# Check for missing values
+print(df_with_missing.isnull().sum())
+
+# Drop rows with any missing values
+df_clean = df_with_missing.dropna()
+
+# Drop rows with missing values in specific column
+df_clean = df_with_missing.dropna(subset=['filename'])
+
+# Fill missing values
+df_filled = df_with_missing.fillna({'label': 'unknown', 'width': 640})
+
+# Drop duplicates
+df_unique = df.drop_duplicates(subset=['filename'])
+\end{lstlisting}
+
+\subsection{Dataset Splitting}
+
+\begin{lstlisting}
+from sklearn.model_selection import train_test_split
+
+# Stratified split (maintains class distribution)
+train_df, test_df = train_test_split(
+    df,
+    test_size=0.2,        # 20% for test
+    random_state=42,      # Reproducible split
+    stratify=df['label']  # Maintain class balance
+)
+
+# Further split train into train + validation
+train_df, val_df = train_test_split(
+    train_df,
+    test_size=0.2,        # 20% of train = validation
+    random_state=42,
+    stratify=train_df['label']
+)
+
+print(f"Train: {len(train_df)} ({len(train_df)/len(df)*100:.1f}%)")
+print(f"Val: {len(val_df)} ({len(val_df)/len(df)*100:.1f}%)")
+print(f"Test: {len(test_df)} ({len(test_df)/len(df)*100:.1f}%)")
+
+# Add split column to main dataframe
+df['split'] = 'train'
+df.loc[df.index.isin(val_df.index), 'split'] = 'val'
+df.loc[df.index.isin(test_df.index), 'split'] = 'test'
+
+# Verify class distribution is maintained
+print("\nClass distribution per split:")
+print(df.groupby(['split', 'label']).size().unstack(fill_value=0))
+
+# Save split dataset
+df.to_csv('dataset_with_splits.csv', index=False)
+\end{lstlisting}
+
+\subsection{Connecting Images with Labels}
+
+\begin{lstlisting}
+import cv2
+import matplotlib.pyplot as plt
+
+def load_image(filepath):
+    """Load and convert image to RGB"""
+    img = cv2.imread(filepath)
+    if img is None:
+        return None
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Add image properties to dataframe
+def get_image_info(filepath):
+    img = cv2.imread(filepath)
+    if img is None:
+        return pd.Series([None, None, None])
+    h, w = img.shape[:2]
+    channels = img.shape[2] if len(img.shape) == 3 else 1
+    return pd.Series([h, w, channels])
+
+df[['height', 'width', 'channels']] = df['filepath'].apply(get_image_info)
+
+# Analyze dataset
+print("\nImage size distribution:")
+print(df[['height', 'width']].describe())
+
+# Find unusual images
+mean_h, mean_w = df['height'].mean(), df['width'].mean()
+unusual = df[
+    (df['height'] < mean_h * 0.5) | 
+    (df['width'] < mean_w * 0.5) |
+    (df['height'] > mean_h * 2) |
+    (df['width'] > mean_w * 2)
+]
+print(f"\nFound {len(unusual)} images with unusual dimensions")
+
+# Visualize samples from each class
+def plot_class_samples(df, n_samples=5):
+    classes = df['label'].unique()
+    fig, axes = plt.subplots(len(classes), n_samples, figsize=(15, 3*len(classes)))
+    
+    for i, class_name in enumerate(classes):
+        class_df = df[df['label'] == class_name].sample(n=min(n_samples, len(class_df)))
+        for j, (_, row) in enumerate(class_df.iterrows()):
+            img = load_image(row['filepath'])
+            if img is not None:
+                axes[i, j].imshow(img)
+                axes[i, j].set_title(f"{class_name}")
+                axes[i, j].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+# plot_class_samples(df, n_samples=5)
+\end{lstlisting}
+
+\section{Part 4: OpenCV Basics}
+
+OpenCV (Open Source Computer Vision Library) is the most widely used library for real-time computer vision.
+
+\subsection{What is OpenCV and Why Use It?}
+
+\textbf{OpenCV Features:}
+\begin{itemize}[noitemsep]
+    \item 2500+ optimized algorithms
+    \item Real-time processing capabilities
+    \item C++ backend (fast)
+    \item Python bindings (easy)
+    \item Cross-platform (Windows, Linux, macOS, mobile)
+    \item Camera and video support
+    \item Extensive documentation and community
+\end{itemize}
+
+\textbf{Installation:}
+\begin{lstlisting}[language=bash]
+pip install opencv-python
+pip install opencv-contrib-python  # Extra modules
+\end{lstlisting}
+
+\subsection{Reading and Writing Images}
+
+\begin{lstlisting}
+import cv2
+import numpy as np
+
+# Read image (returns BGR format!)
+image = cv2.imread('image.jpg')
+
+# Check if loaded successfully
+if image is None:
+    print("Error: Could not load image")
+else:
+    print(f"Image loaded: {image.shape}")
+
+# Read modes
+gray = cv2.imread('image.jpg', cv2.IMREAD_GRAYSCALE)  # Grayscale
+unchanged = cv2.imread('image.png', cv2.IMREAD_UNCHANGED)  # With alpha
+
+# Image properties
+height, width, channels = image.shape
+print(f"Dimensions: {width}x{height}, Channels: {channels}")
+print(f"Data type: {image.dtype}")
+print(f"Total pixels: {image.size}")
+
+# Write image
+cv2.imwrite('output.jpg', image)
+cv2.imwrite('output.png', image)  # Auto-detects format from extension
+
+# Write with quality settings (JPEG)
+cv2.imwrite('output.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 95])
+
+# Write PNG with compression
+cv2.imwrite('output.png', image, [cv2.IMWRITE_PNG_COMPRESSION, 9])
+\end{lstlisting}
+
+\textbf{Important:} OpenCV uses BGR color order, not RGB! Always convert for matplotlib display:
+
+\begin{lstlisting}
+import matplotlib.pyplot as plt
+
+# Wrong way - BGR displayed as RGB (colors wrong)
+plt.imshow(image)
+plt.show()
+
+# Correct way - convert to RGB first
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+plt.imshow(image_rgb)
+plt.show()
+\end{lstlisting}
+
+\subsection{Color Space Conversions}
+
+\begin{lstlisting}
+image = cv2.imread('image.jpg')
+
+# BGR to RGB
+rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+# BGR to Grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# BGR to HSV (Hue, Saturation, Value)
+hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+# BGR to LAB
+lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+
+# Grayscale to BGR (3-channel grayscale)
+gray_bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
+# RGB to Grayscale (if you have RGB)
+# First ensure it's RGB, then:
+gray_from_rgb = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
+
+print(f"Original: {image.shape}")
+print(f"Grayscale: {gray.shape}")
+print(f"HSV: {hsv.shape}")
+\end{lstlisting}
+
+\subsection{Resizing and Cropping}
+
+\begin{lstlisting}
+image = cv2.imread('image.jpg')
+h, w = image.shape[:2]
+
+# Resize to specific dimensions (width, height)
+resized = cv2.resize(image, (320, 240))
+
+# Resize with scale factor
+scaled_down = cv2.resize(image, None, fx=0.5, fy=0.5)
+scaled_up = cv2.resize(image, None, fx=2.0, fy=2.0)
+
+# Resize maintaining aspect ratio
+def resize_with_aspect_ratio(img, target_width=None, target_height=None):
+    h, w = img.shape[:2]
+    
+    if target_width is not None:
+        aspect = h / w
+        new_h = int(target_width * aspect)
+        return cv2.resize(img, (target_width, new_h))
+    
+    if target_height is not None:
+        aspect = w / h
+        new_w = int(target_height * aspect)
+        return cv2.resize(img, (new_w, target_height))
+    
+    return img
+
+resized_aspect = resize_with_aspect_ratio(image, target_width=640)
+
+# Interpolation methods
+# INTER_NEAREST - Fastest, lowest quality (good for pixel art)
+# INTER_LINEAR - Default, good balance
+# INTER_CUBIC - Slower, better quality (good for upscaling)
+# INTER_LANCZOS4 - Best quality, slowest
+# INTER_AREA - Best for downscaling
+
+upscaled_hq = cv2.resize(image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+downscaled = cv2.resize(image, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+
+# Cropping (using array slicing)
+# Format: image[y1:y2, x1:x2]
+
+# Crop top-left 100x100
+crop_tl = image[0:100, 0:100]
+
+# Crop center region
+center_x, center_y = w // 2, h // 2
+crop_size = 200
+center_crop = image[
+    center_y - crop_size//2 : center_y + crop_size//2,
+    center_x - crop_size//2 : center_x + crop_size//2
+]
+
+# Crop bottom-right quarter
+crop_br = image[h//2:, w//2:]
+
+print(f"Original: {image.shape}")
+print(f"Center crop: {center_crop.shape}")
+\end{lstlisting}
+
+\subsection{Blurring}
+
+\begin{lstlisting}
+image = cv2.imread('image.jpg')
+
+# 1. Gaussian Blur - Most common, good for noise reduction
+blur_gaussian = cv2.GaussianBlur(image, (5, 5), 0)
+# (5,5) = kernel size (must be odd)
+# 0 = sigmaX (calculated automatically if 0)
+
+# Stronger blur
+blur_strong = cv2.GaussianBlur(image, (15, 15), 0)
+
+# 2. Median Blur - Best for salt-and-pepper noise
+blur_median = cv2.medianBlur(image, 5)  # Kernel size (odd)
+
+# 3. Average Blur - Simple averaging
+blur_average = cv2.blur(image, (5, 5))
+
+# 4. Bilateral Filter - Smooths while preserving edges
+blur_bilateral = cv2.bilateralFilter(image, 9, 75, 75)
+# d = diameter
+# sigmaColor = filter sigma in color space
+# sigmaSpace = filter sigma in coordinate space
+
+# Compare results
+import matplotlib.pyplot as plt
+
+images = [image, blur_gaussian, blur_median, blur_bilateral]
+titles = ['Original', 'Gaussian', 'Median', 'Bilateral']
+
+fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+for img, title, ax in zip(images, titles, axes):
+    ax.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    ax.set_title(title)
+    ax.axis('off')
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\subsection{Canny Edge Detection}
+
+\begin{lstlisting}
+image = cv2.imread('image.jpg')
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply Gaussian blur first (reduces noise)
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+# Canny edge detection
+edges = cv2.Canny(blurred, threshold1=50, threshold2=150)
+# threshold1 = lower threshold for weak edges
+# threshold2 = upper threshold for strong edges
+# Edge pixels between thresholds are included only if connected to strong edges
+
+# Try different thresholds
+edges_sensitive = cv2.Canny(blurred, 30, 100)   # More edges
+edges_strict = cv2.Canny(blurred, 100, 200)     # Fewer edges
+edges_auto = cv2.Canny(blurred, 0, 255)         # Auto thresholds
+
+# Automatic threshold calculation (Otsu's method inspiration)
+def auto_canny(image, sigma=0.33):
+    """Automatically determine Canny thresholds"""
+    median_val = np.median(image)
+    lower = int(max(0, (1.0 - sigma) * median_val))
+    upper = int(min(255, (1.0 + sigma) * median_val))
+    return cv2.Canny(image, lower, upper)
+
+edges_auto_calc = auto_canny(blurred)
+
+# Display results
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+axes = axes.ravel()
+
+axes[0].imshow(gray, cmap='gray')
+axes[0].set_title('Original Grayscale')
+
+axes[1].imshow(blurred, cmap='gray')
+axes[1].set_title('Blurred')
+
+axes[2].imshow(edges, cmap='gray')
+axes[2].set_title('Canny (50, 150)')
+
+axes[3].imshow(edges_sensitive, cmap='gray')
+axes[3].set_title('Sensitive (30, 100)')
+
+axes[4].imshow(edges_strict, cmap='gray')
+axes[4].set_title('Strict (100, 200)')
+
+axes[5].imshow(edges_auto_calc, cmap='gray')
+axes[5].set_title('Auto Threshold')
+
+for ax in axes:
+    ax.axis('off')
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\section{Part 5: Live Coding - Edge Detection Mini-Project}
+
+Build a complete project that processes a folder of images and displays edge detection results.
+
+\begin{lstlisting}
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+from pathlib import Path
+
+def detect_edges(image_path, low_threshold=50, high_threshold=150, blur_kernel=5):
+    """
+    Apply Canny edge detection to an image with preprocessing.
+    
+    Args:
+        image_path: Path to input image
+        low_threshold: Lower threshold for Canny
+        high_threshold: Upper threshold for Canny
+        blur_kernel: Gaussian blur kernel size (must be odd)
+    
+    Returns:
+        original_image_rgb, edges_image
+    """
+    # Read image
+    image = cv2.imread(image_path)
+    
+    if image is None:
+        print(f'Error: Could not load {image_path}')
+        return None, None
+    
+    # Convert to RGB for display
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Apply Gaussian blur to reduce noise
+    blurred = cv2.GaussianBlur(gray, (blur_kernel, blur_kernel), 0)
+    
+    # Apply Canny edge detection
+    edges = cv2.Canny(blurred, low_threshold, high_threshold)
+    
+    return image_rgb, edges
+
+
+def process_image_folder(folder_path, output_folder=None, 
+                         low_threshold=50, high_threshold=150):
+    """
+    Process all images in a folder and display/save edge detection results.
+    
+    Args:
+        folder_path: Path to folder containing images
+        output_folder: Optional path to save edge-detected images
+        low_threshold: Canny lower threshold
+        high_threshold: Canny upper threshold
+    """
+    # Create output folder if specified
+    if output_folder:
+        Path(output_folder).mkdir(parents=True, exist_ok=True)
+        print(f"Created output folder: {output_folder}")
+    
+    # Get list of image files
+    image_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']
+    image_files = [
+        f for f in os.listdir(folder_path)
+        if Path(f).suffix.lower() in image_extensions
+    ]
+    
+    if not image_files:
+        print(f"No images found in {folder_path}")
+        return
+    
+    print(f'Found {len(image_files)} images')
+    
+    # Process each image
+    for idx, img_file in enumerate(image_files, 1):
+        img_path = os.path.join(folder_path, img_file)
+        print(f'[{idx}/{len(image_files)}] Processing: {img_file}')
+        
+        # Detect edges
+        original, edges = detect_edges(img_path, low_threshold, high_threshold)
+        
+        if original is None:
+            continue
+        
+        # Create side-by-side display
+        fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+        
+        axes[0].imshow(original)
+        axes[0].set_title(f'Original: {img_file}')
+        axes[0].axis('off')
+        
+        axes[1].imshow(edges, cmap='gray')
+        axes[1].set_title(f'Edge Detection (Canny)')
+        axes[1].axis('off')
+        
+        plt.tight_layout()
+        plt.show()
+        
+        # Save edge image if output folder specified
+        if output_folder:
+            output_name = f'edges_{Path(img_file).stem}.png'
+            output_path = os.path.join(output_folder, output_name)
+            cv2.imwrite(output_path, edges)
+            print(f'  Saved: {output_path}')
+        
+        print()  # Empty line for readability
+
+
+def batch_compare_thresholds(image_path):
+    """
+    Compare different Canny thresholds on a single image.
+    """
+    image = cv2.imread(image_path)
+    if image is None:
+        print(f"Error loading {image_path}")
+        return
+    
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    
+    # Different threshold combinations
+    thresholds = [
+        (30, 100, 'Sensitive'),
+        (50, 150, 'Balanced'),
+        (100, 200, 'Strict'),
+        (0, 255, 'Auto')
+    ]
+    
+    fig, axes = plt.subplots(2, 2, figsize=(12, 12))
+    axes = axes.ravel()
+    
+    for idx, (low, high, name) in enumerate(thresholds):
+        edges = cv2.Canny(blurred, low, high)
+        axes[idx].imshow(edges, cmap='gray')
+        axes[idx].set_title(f'{name}\n(low={low}, high={high})')
+        axes[idx].axis('off')
+    
+    plt.suptitle(f'Canny Edge Detection - Threshold Comparison', fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+
+# Example usage
+if __name__ == '__main__':
+    # Process folder
+    process_image_folder(
+        folder_path='sample_images',
+        output_folder='edge_results',
+        low_threshold=50,
+        high_threshold=150
+    )
+    
+    # Compare thresholds on single image
+    # batch_compare_thresholds('sample_images/test.jpg')
+\end{lstlisting}
+
+\section{Mini Tasks}
+
+\subsection{Task 1: Image Processing Pipeline}
+
+Create a processing pipeline that applies multiple operations and displays them in a grid.
+
+\textbf{Requirements:}
+\begin{enumerate}
+    \item Load an image
+    \item Apply Gaussian blur (7x7 kernel)
+    \item Apply Canny edge detection
+    \item Apply binary thresholding
+    \item Display all 4 images in a 2x2 grid
+\end{enumerate}
+
+\subsection{Task 2: Pixel Histogram Analysis}
+
+Create a program that analyzes and visualizes pixel intensity distributions.
+
+\textbf{Requirements:}
+\begin{enumerate}
+    \item Load a grayscale image
+    \item Calculate histogram of pixel intensities
+    \item Display image and histogram side-by-side
+    \item Add statistics (mean, median, std)
+\end{enumerate}
+
+\section{Assignment: Pencil Sketch Effect}
+
+\textbf{Due:} Next session
+
+\textbf{Objective:} Create a program that converts any image to a realistic pencil sketch effect.
+
+\textbf{Algorithm:}
+\begin{enumerate}
+    \item Convert image to grayscale
+    \item Invert grayscale: $inverted = 255 - gray$
+    \item Apply Gaussian blur to inverted (kernel size 21x21)
+    \item Invert the blurred result: $inverted\_blur = 255 - blurred$
+    \item Divide and scale: $sketch = \frac{gray}{inverted\_blur} \times 256$
+    \item Clip values to [0, 255] range
+\end{enumerate}
+
+\textbf{Requirements:}
+\begin{itemize}[noitemsep]
+    \item Clean, well-commented code
+    \item Function-based design
+    \item Display original and sketch side-by-side
+    \item Save sketch to file
+    \item Test with at least 3 different images
+    \item Handle errors gracefully
+\end{itemize}
+
+\textbf{Bonus Challenges:}
+\begin{itemize}[noitemsep]
+    \item Add adjustable blur parameter
+    \item Create color pencil sketch version
+    \item Process video file frame-by-frame
+    \item Add GUI with sliders for real-time adjustment
+\end{itemize}
+
+See separate assignment file for detailed instructions and starter code.
+
+\section{Resources and Next Steps}
+
+\subsection{Documentation}
+\begin{itemize}[noitemsep]
+    \item NumPy: \url{https://numpy.org/doc/}
+    \item Pandas: \url{https://pandas.pydata.org/docs/}
+    \item OpenCV-Python: \url{https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html}
+    \item Matplotlib: \url{https://matplotlib.org/stable/contents.html}
+\end{itemize}
+
+\subsection{Preview of Day 2}
+Tomorrow we'll dive deeper into:
+\begin{itemize}[noitemsep]
+    \item Advanced preprocessing and augmentation
+    \item Classical CV techniques (ORB, SIFT, template matching)
+    \item Contour detection and shape analysis
+    \item Real-time webcam applications
+    \item Haar cascade face detection
+\end{itemize}
+
+\vspace{1em}
+\begin{center}
+\textbf{\Large Great job today! Complete the assignment and see you tomorrow!}
+\end{center}
+
+\end{document}

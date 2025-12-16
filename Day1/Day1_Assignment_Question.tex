@@ -1,0 +1,306 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{white},   
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{red!70!black},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    numbers=left,                    
+    language=Python
+}
+
+\lstset{style=pythonstyle}
+
+\title{\textbf{Day 1 Assignment: Pencil Sketch Effect}\\
+\large Computer Vision Bootcamp}
+\author{made with $\heartsuit$, by Aryan}
+\date{Due: Next Session}
+
+\begin{document}
+
+\maketitle
+
+\section{Objective}
+Create a Python program that transforms any photograph into a realistic pencil sketch drawing using classical image processing techniques.
+
+\section{Background}
+
+The pencil sketch effect simulates traditional pencil drawing by:
+\begin{itemize}
+    \item Extracting edges and contours
+    \item Creating grayscale tones that mimic pencil shading
+    \item Using inversion and blending techniques
+\end{itemize}
+
+This technique is based on the "dodge and burn" method from photography, adapted for digital image processing.
+
+\section{Algorithm}
+
+Your program should implement the following steps:
+
+\subsection{Step 1: Convert to Grayscale}
+Convert the input color image to grayscale using OpenCV:
+\begin{lstlisting}
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+\end{lstlisting}
+
+\subsection{Step 2: Invert the Grayscale Image}
+Create a negative by inverting pixel values:
+\begin{equation}
+    inverted(x, y) = 255 - gray(x, y)
+\end{equation}
+
+\subsection{Step 3: Apply Gaussian Blur}
+Blur the inverted image with a large kernel (21x21):
+\begin{lstlisting}
+blurred = cv2.GaussianBlur(inverted, (21, 21), 0)
+\end{lstlisting}
+
+The large kernel size creates soft, diffused tones.
+
+\subsection{Step 4: Invert the Blurred Image}
+Invert again to prepare for blending:
+\begin{equation}
+    inverted\_blur(x, y) = 255 - blurred(x, y)
+\end{equation}
+
+\subsection{Step 5: Divide and Scale}
+Create the sketch effect using division and scaling:
+\begin{equation}
+    sketch(x, y) = \min\left(255, \frac{gray(x, y)}{inverted\_blur(x, y)} \times 256\right)
+\end{equation}
+
+This step brightens highlights and emphasizes edges, creating the pencil sketch appearance.
+
+\section{Requirements}
+
+\subsection{Functional Requirements}
+Your program must:
+\begin{enumerate}
+    \item Accept an image file path as input
+    \item Implement the complete pencil sketch algorithm
+    \item Display the original and sketch side-by-side
+    \item Save the sketch output to a file
+    \item Include error handling for:
+    \begin{itemize}
+        \item File not found
+        \item Invalid image format
+        \item Processing errors
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Code Quality Requirements}
+\begin{itemize}
+    \item Use functions to organize code (minimum 2 functions)
+    \item Include docstrings for all functions
+    \item Add inline comments for complex operations
+    \item Follow Python naming conventions (PEP 8)
+    \item Handle edge cases gracefully
+\end{itemize}
+
+\subsection{Testing Requirements}
+Test your program with at least 3 different images:
+\begin{enumerate}
+    \item A portrait/face
+    \item A landscape/scenery
+    \item An object with distinct edges
+\end{enumerate}
+
+\section{Starter Code}
+
+\begin{lstlisting}
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+def pencil_sketch(image_path, blur_kernel=21):
+    """
+    Convert an image to pencil sketch effect.
+    
+    Args:
+        image_path (str): Path to input image
+        blur_kernel (int): Gaussian blur kernel size (must be odd)
+    
+    Returns:
+        tuple: (original_rgb, sketch) or (None, None) if error
+    """
+    # TODO: Implement the algorithm
+    # Step 1: Load image
+    
+    # Step 2: Convert to grayscale
+    
+    # Step 3: Invert grayscale
+    
+    # Step 4: Apply Gaussian blur
+    
+    # Step 5: Invert blurred image
+    
+    # Step 6: Divide and scale
+    
+    pass
+
+
+def display_result(original, sketch, save_path=None):
+    """
+    Display original and sketch side-by-side.
+    
+    Args:
+        original: Original image (RGB)
+        sketch: Sketch image (grayscale)
+        save_path: Optional path to save the sketch
+    """
+    # TODO: Create matplotlib figure with 1 row, 2 columns
+    # Display original on left, sketch on right
+    # Add titles and remove axes
+    # If save_path provided, save the sketch
+    
+    pass
+
+
+def main():
+    """Main function to run the pencil sketch converter."""
+    # TODO: Get image path from user or command line
+    # Call pencil_sketch function
+    # Call display_result function
+    # Handle any errors
+    
+    pass
+
+
+if __name__ == '__main__':
+    main()
+\end{lstlisting}
+
+\section{Submission Guidelines}
+
+\subsection{What to Submit}
+\begin{enumerate}
+    \item Python script (\texttt{pencil\_sketch.py})
+    \item 3 test images (original)
+    \item 3 output sketches
+    \item README file with:
+    \begin{itemize}
+        \item How to run your program
+        \item Any dependencies
+        \item Observations about results
+        \item Any challenges faced
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Submission Format}
+Create a ZIP file named \texttt{Day1\_Assignment\_YourName.zip} containing:
+\begin{verbatim}
+Day1_Assignment_YourName/
+|-- pencil_sketch.py
+|-- test_images/
+|   |-- test1.jpg
+|   |-- test2.jpg
+|   +-- test3.jpg
+|-- output_sketches/
+|   |-- sketch1.jpg
+|   |-- sketch2.jpg
+|   +-- sketch3.jpg
++-- README.txt
+\end{verbatim}
+
+\section{Grading Rubric}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Criteria} & \textbf{Points} \\
+\hline
+Algorithm Implementation & 30 \\
+Code Quality \& Organization & 20 \\
+Error Handling & 10 \\
+Display \& Visualization & 15 \\
+Testing (3 images) & 15 \\
+Documentation & 10 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Bonus Challenges}
+
+Implement any of these for extra credit:
+
+\subsection{Bonus 1: Adjustable Blur Parameter (+10 points)}
+Add command-line argument or user input to adjust blur kernel size dynamically.
+
+\subsection{Bonus 2: Color Pencil Sketch (+15 points)}
+Create a colored sketch version:
+\begin{itemize}
+    \item Convert to HSV color space
+    \item Apply sketch algorithm to Value channel only
+    \item Combine with Hue and Saturation
+    \item Add slight desaturation for realistic effect
+\end{itemize}
+
+\subsection{Bonus 3: Video Processing (+20 points)}
+Extend your program to process video files frame-by-frame:
+\begin{itemize}
+    \item Read video using \texttt{cv2.VideoCapture}
+    \item Apply sketch effect to each frame
+    \item Write output video using \texttt{cv2.VideoWriter}
+    \item Display progress bar
+\end{itemize}
+
+\subsection{Bonus 4: Interactive GUI (+25 points)}
+Create a simple GUI using Tkinter or similar:
+\begin{itemize}
+    \item File selection dialog
+    \item Sliders to adjust blur kernel size
+    \item Real-time preview
+    \item Save button
+\end{itemize}
+
+\section{Tips for Success}
+
+\begin{itemize}
+    \item \textbf{Start simple:} Get the basic algorithm working first before adding features
+    \item \textbf{Test incrementally:} Display intermediate results after each step
+    \item \textbf{Handle division by zero:} Add small epsilon when dividing
+    \item \textbf{Experiment with kernel size:} Try different values (15, 21, 25, 31)
+    \item \textbf{Check data types:} Ensure proper uint8 conversion for display
+    \item \textbf{Use git:} Version control helps track your progress
+\end{itemize}
+
+\section{Common Pitfalls}
+
+\begin{enumerate}
+    \item \textbf{Division by zero:} Add \texttt{+ 1e-6} to denominator
+    \item \textbf{Overflow errors:} Use \texttt{np.clip()} to constrain values
+    \item \textbf{Wrong data types:} Convert to \texttt{uint8} for display
+    \item \textbf{BGR vs RGB:} Remember OpenCV uses BGR
+    \item \textbf{Odd kernel sizes:} Gaussian blur requires odd kernel sizes
+\end{enumerate}
+
+\section{Resources}
+
+\begin{itemize}
+    \item OpenCV Documentation: \url{https://docs.opencv.org}
+    \item NumPy Documentation: \url{https://numpy.org/doc}
+    \item Matplotlib Gallery: \url{https://matplotlib.org/stable/gallery}
+\end{itemize}
+
+\vspace{1em}
+\begin{center}
+\textbf{Good luck! We look forward to seeing your creative sketches!}
+\end{center}
+
+\end{document}
