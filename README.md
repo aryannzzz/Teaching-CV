@@ -3,6 +3,8 @@
 
 Made with ♡ by Aryan
 
+You can access the lectures here: https://drive.google.com/drive/folders/1RJmWzRNFeZnwbRoeaug_Hz8LXgtYwk_Q
+
 ---
 
 ## 📚 Overview
